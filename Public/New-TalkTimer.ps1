@@ -17,8 +17,12 @@ Function New-TalkTimer {
 
         $Countdown = $WarningTimes | Sort-Object -Descending
         $finalTime = $Countdown[-1]
+        Write-Verbose "Creating StopWatch..."
+
         $StopWatch = [System.Diagnostics.Stopwatch]::new()
 
+        Write-Verbose "Starting Watch"
+        $StopWatch.Start()
         Foreach($Count in $Countdown) {
 
             Do {
@@ -30,8 +34,12 @@ Function New-TalkTimer {
 
             Switch ($Count) {
                 
-                '1' { $text = "$Count minute left" }
-                Default { $text = "$Count minutes left" }
+                '1' { 
+                    Write-Verbose "Popping final warning"
+                    $text = "$Count minute left" }
+                Default { 
+                    Write-Verbose "Popping toast..."
+                    $text = "$Count minutes left" }
             
             }
 
@@ -40,7 +48,11 @@ Function New-TalkTimer {
         }
 
         Start-Sleep -Seconds ($finalTime * 60)
+        Write-Verbose "Popping time's up message"
         $text = "That's time!"
+        Pop-Notification
+        $StopWatch.Stop()
+
 
     }
 
